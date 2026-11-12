@@ -173,8 +173,9 @@ class TicketService:
                          key=key_func,
                          reverse=(order == "desc"))
         page_size = page_size or self._settings.default_page_size
-        page_size = (page_size if page_size<self._settings.max_page_size else self._settings.max_page_size)
-        return TicketPage(items=tickets[(page-1) * page_size:page * page_size],total=len(tickets),page=page,page_size=page_size)
+        page_size = min(page_size, self._settings.max_page_size)
+        return TicketPage(items=tickets[(page-1) * page_size:page * page_size],
+                          total=len(tickets),page=page,page_size=page_size)
 
     def update_ticket(self, ticket_id: int, changes: TicketUpdate) -> Ticket:
         ticket = self._repository.get(ticket_id)
